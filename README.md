@@ -1,3 +1,3 @@
-#beams
+# beams
 
 Toy beam analysis utility
