@@ -1,0 +1,6 @@
+[package]
+name = "beams"
+version = "0.1.0"
+authors = ["Dominick <dominick.allen1989@gmail.com>"]
+
+[dependencies]
