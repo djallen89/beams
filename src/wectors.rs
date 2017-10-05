@@ -199,6 +199,10 @@ impl<T:SquareRoot<T> + Clone + Arithmetic<T>> Wector<T> {
     pub fn norm(&self) -> T {
         (self.x() * self.x() + self.y() * self.y() + self.z() * self.z()).squareroot()
     }
+
+    pub fn unit(&self) -> Wector<T> {
+        self.div_by(&self.norm())
+    }
 }
 
 impl<T: Neg<Output=T> + Clone + PartialEq + PartialOrd> Neg for Wector<T> {

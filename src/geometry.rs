@@ -1,5 +1,21 @@
-use super::mathtraits::{Math, Zero, One, Polygon, PolygonError};
+use super::mathtraits::{Math, Zero, One, Polygon, PolygonError, Components};
 use super::wectors::{Point, Wector, Coordinates};
+
+pub enum Shape<T> {
+    Triangle(Triangle<T>),
+    Rectangle(Rectangle<T>),
+    Circle(Circle<T>)
+}
+
+impl<T: Math<T> + Polygon<Out = T> + Clone> Shape<T> {
+    pub fn normal(&self) -> Wector<T> {
+        match self {
+            &Shape::Triangle(ref t) => t.normal(),
+            &Shape::Rectangle(ref r) => r.normal(),
+            &Shape::Circle(ref c) => c.normal()
+        }
+    }
+}
 
 pub struct Triangle<T> {
     coords: Coordinates,
@@ -66,6 +82,12 @@ impl<T: Clone + Math<T> + Zero + One> Polygon for Triangle<T> where T: PartialEq
         let c = (pos[0].clone() + pos[1].clone() + pos[2].clone()).div_by(&three);
         c
     }
+
+    fn normal(&self) -> Wector<T> {
+        let segs = self.segments();
+        let cross = segs[0].cross(&segs[1]);
+        cross.unit()
+    }
 }
 
 pub struct Rectangle<T> {
@@ -111,13 +133,53 @@ impl<T: Clone + Math<T>> Polygon for Rectangle<T> {
         let four = (0 .. 4).fold(T::zero(), |acc, _| acc + T::one());
         self.pos.iter().fold(Point::zero(), |acc, x| acc + x.clone()).div_by(&four)
     }
-}
-/*
-pub struct Circle<T> {
-    coords: Coordinates,
-    pos: Vec<Point<T>>
+    
+    fn normal(&self) -> Wector<T> {
+        let segs = self.segments();
+        let cross = segs[0].cross(&segs[1]);
+        cross.unit()
+    }
 }
 
-impl<T: Clone + One<Out = T> + Zero<Out = T> + Div<Output = T> + Add<Output = T> + Neg<Output = T> +SquareRoot<T> +
-     Mul<Output = T> + Sub<Output = T> + Div<Output = T> + Trigonometry<T>> Polygon for Triangle<T> {
-}*/
+
+pub struct Circle<T> {
+    coords: Coordinates,
+    position: Wector<T>,
+    radius: T,
+    normal: Wector<T>
+}
+
+impl<T: Math<T> + Clone> Circle<T> {
+    pub fn new(s: Coordinates, p: Wector<T>, r: T, n: Wector<T>) -> Circle<T>{
+        Circle {
+            coords: s,
+            position: p,
+            radius: r,
+            normal: n
+        }
+    }
+
+    pub fn radius(&self) -> T {
+        self.radius.clone()
+    }
+}
+
+impl<T: Math<T> + Clone> Polygon for Circle<T> {
+    type Out = T;
+    fn area(&self) -> T {
+        T::pi() * self.radius() * self.radius()
+    }
+
+
+    fn perimeter(&self) -> T {
+        (T::one() + T::one()) * T::pi() * self.radius()
+    }
+
+    fn centroid(&self) -> Point<T> {
+        Point::new(self.position.x(), self.position.y(), self.position.z())
+    }
+
+    fn normal(&self) -> Wector<T> {
+        self.normal.clone()
+    }
+}

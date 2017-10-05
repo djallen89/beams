@@ -1,7 +1,7 @@
 use std::ops::{Add, Sub, Mul, Div, Neg};
 use std::f64::consts;
 use std::marker;
-use super::wectors::Point;
+use super::wectors::{Wector, Point};
 
 pub trait Arithmetic<T>:
 Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T>
@@ -120,6 +120,7 @@ pub trait Polygon {
     fn area(&self) -> Self::Out;
     fn perimeter(&self) -> Self::Out;
     fn centroid(&self) -> Point<Self::Out>;
+    fn normal(&self) -> Wector<Self::Out>;
 }
 
 #[derive(Debug, Clone, Copy)]
