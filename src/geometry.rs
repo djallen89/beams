@@ -1,5 +1,5 @@
 use super::mathtraits::{Math, Zero, One, Polygon, PolygonError, Components};
-use super::wectors::{Point, Wector, Coordinates};
+use super::wectors::{Axis, Point, Wector, Coordinates};
 
 pub enum Shape<T> {
     Triangle(Triangle<T>),
@@ -92,27 +92,42 @@ impl<T: Clone + Math<T> + Zero + One> Polygon for Triangle<T> where T: PartialEq
 
 pub struct Rectangle<T> {
     coords: Coordinates,
-    pos: Vec<Point<T>>
+    position: Wector<T>,
+    pub width: Wector<T>,
+    pub height: Wector<T>,
+    normal: Wector<T>,
+    thin_wall: Option<Axis>
 }
 
 impl<T: Math<T> + Clone> Rectangle<T> {
-    pub fn new(a: Point<T>, b: Point<T>, c: Point<T>, d: Point<T>, s: Coordinates) -> Result<Rectangle<T>, PolygonError> {
-        let positions = vec!(a, b, c, d);
-        let segments = lengths(positions.clone());
-        if segments[0].is_orthogonal_to(&segments[1]) && segments[2].is_orthogonal_to(&segments[3]) &&
-            segments[0] == segments[2] && segments[1] == segments[3]
-        {
+    pub fn new(s: Coordinates, position: Wector<T>, width: Wector<T>,
+               length: Wector<T>, twall: Option<Axis>) -> Result<Rectangle<T>, PolygonError> {
+        if length.is_orthogonal_to(&width) {
+            let normal = length.cross(width);
             Ok(Rectangle {
                 coords: s,
-                pos: positions
+                position: position,
+                width: width,
+                height: length,
+                normal: normal
             })
         } else {
             Err(PolygonError::NonOrthogonal)
         }
     }
 
-    pub fn segments(&self) -> Vec<Wector<T>> {
-        lengths(parameterization(self.coords, Coordinates::Cartesian, &self.pos))
+    pub fn len
+
+    /* Ratio of ab to bc */
+    pub fn ratio(&self, lxw: bool) -> T {
+        if lxw {
+            self.length.norm() / self.width.norm()
+        } else {
+            self.width.norm() / self.length.norm()
+        }
+    }
+
+    pub fn I(&self, a: Axis, thin_wall) -> T {
     }
 }
 

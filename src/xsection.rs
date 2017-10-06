@@ -19,5 +19,9 @@ impl<T: Math<T> + Polygon<Out = T> + Clone + PartialOrd> XSection<T> {
             neutral_axis: na,
             shapes: s
         }
-    }     
+    }
+
+    pub fn area(&self) -> T {
+        s.iter().fold(T::zero(), |acc, x| acc + x.area())
+    }
 }

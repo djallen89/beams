@@ -1,6 +1,31 @@
 use std::ops::{Add, Sub, Mul, Div, Neg};
 use super::mathtraits::*;
 
+#[derive(Copy, CLone, Debug)]
+
+#[derive(Copy, Clone, Debug)]
+pub enum Cartesian {
+    X,
+    Y,
+    Z
+}
+
+
+#[derive(Copy, Clone, Debug)]
+pub enum Cylindrical {
+    R,
+    Theta,
+    Z
+}
+
+
+#[derive(Copy, Clone, Debug)]
+pub enum Spherical {
+    Rho,
+    Theta,
+    Phi
+}
+
 #[derive(Clone, Debug)]
 pub struct Point<T> {
     x: T,
